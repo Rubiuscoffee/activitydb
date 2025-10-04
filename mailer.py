@@ -6,9 +6,11 @@ from dotenv import load_dotenv
 
 load_dotenv()  # opcional si usas .env
 DB_HOST = os.getenv("DB_HOST","127.0.0.1")
+DB_PORT = int(os.getenv("DB_PORT","3306"))
 DB_USER = os.getenv("DB_USER","root")
 DB_PASS = os.getenv("DB_PASS","")
 DB_NAME = os.getenv("DB_NAME","hotel_reservas")
+DB_CA = os.getenv("DB_CA")
 
 SMTP_HOST = os.getenv("SMTP_HOST","smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT","587"))
@@ -25,7 +27,24 @@ def send_mail(to_email, subject, body):
         s.login(SMTP_USER, SMTP_PASS)
         s.send_message(msg)
 
-cnx = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASS, database=DB_NAME)
+# Configurar SSL si se proporciona el certificado CA
+ssl_config = {}
+if DB_CA:
+    ssl_config = {
+        'ca': DB_CA,
+        'verify_cert': True,
+        'verify_identity': False
+    }
+
+cnx = mysql.connector.connect(
+    host=DB_HOST, 
+    port=DB_PORT,
+    user=DB_USER, 
+    password=DB_PASS, 
+    database=DB_NAME,
+    ssl_disabled=False if DB_CA else True,
+    **ssl_config
+)
 cnx.autocommit = False
 cur = cnx.cursor(dictionary=True)
 
