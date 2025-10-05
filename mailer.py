@@ -7,9 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()  # opcional si usas .env
 DB_HOST = os.getenv("DB_HOST","127.0.0.1")
 DB_PORT = int(os.getenv("DB_PORT","3306"))
-DB_USER = os.getenv("DB_USER","root")
-DB_PASS = os.getenv("DB_PASS","")
-DB_NAME = os.getenv("DB_NAME","hotel_reservas")
+DB_USER = os.getenv("DB_USERNAME","root")
+DB_PASS = os.getenv("DB_PASSWORD","")
+DB_NAME = os.getenv("DB_DATABASE","hotel_reservas")
 DB_CA = os.getenv("DB_CA")
 
 SMTP_HOST = os.getenv("SMTP_HOST","smtp.gmail.com")
@@ -31,9 +31,9 @@ def send_mail(to_email, subject, body):
 ssl_config = {}
 if DB_CA:
     ssl_config = {
-        'ca': DB_CA,
-        'verify_cert': True,
-        'verify_identity': False
+        'ssl_ca': DB_CA,
+        'ssl_verify_cert': True,
+        'ssl_verify_identity': False
     }
 
 cnx = mysql.connector.connect(
